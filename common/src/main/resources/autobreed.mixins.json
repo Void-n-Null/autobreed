@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.gigabit101.autobreed.mixin",
+  "package": "net.voidnull.autobreed.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AnimalMixin"

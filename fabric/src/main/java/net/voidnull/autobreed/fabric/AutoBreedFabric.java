@@ -1,4 +1,4 @@
-package net.gigabit101.autobreed.fabric;
+package net.voidnull.autobreed.fabric;
 
 import net.fabricmc.api.ModInitializer;
 

@@ -5,7 +5,7 @@
   "name": "AutoBreed",
   "description": "Easy Breeding adds the ability to breed animals (excepting Ocelots and Wolves) by tossing their breeding food on the ground near them.",
   "authors": [
-    "Gigabit101, Icynewyear"
+    "VoidNull, Gigabit101, Icynewyear"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/easy-breeding",
@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.gigabit101.autobreed.fabric.AutoBreedFabric"
+      "net.voidnull.autobreed.fabric.AutoBreedFabric"
     ]
   },
   "depends": {

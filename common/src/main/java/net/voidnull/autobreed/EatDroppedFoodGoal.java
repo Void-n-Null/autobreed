@@ -1,4 +1,4 @@
-package net.voidnull.autobreed;
+package net.gigabit101.autobreed;
 
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;

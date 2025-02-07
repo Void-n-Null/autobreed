@@ -7,7 +7,7 @@ license = "GNU GENERAL PUBLIC LICENSE"
 modId = "autobreed"
 version = "${version}"
 displayName = "AutoBreed"
-authors = "Gigabit101, Icynewyear"
+authors = "VoidNull, Gigabit101, Icynewyear"
 description = '''
 Easy Breeding adds the ability to breed animals (excepting Ocelots and Wolves) by tossing their breeding food on the ground near them.
 '''
