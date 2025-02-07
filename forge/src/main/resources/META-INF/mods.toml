@@ -4,23 +4,23 @@ loaderVersion = "[43,)"
 license = "GNU GENERAL PUBLIC LICENSE"
 
 [[mods]]
-modId = "easybreeding"
+modId = "autobreed"
 version = "${version}"
-displayName = "EasyBreeding"
+displayName = "AutoBreed"
 authors = "Gigabit101, Icynewyear"
 description = '''
 Easy Breeding adds the ability to breed animals (excepting Ocelots and Wolves) by tossing their breeding food on the ground near them.
 '''
 #logoFile = ""
 
-[[dependencies.easybreeding]]
+[[dependencies.autobreed]]
 modId = "forge"
 mandatory = true
 versionRange = "[43,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.easybreeding]]
+[[dependencies.autobreed]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.19.2,)"

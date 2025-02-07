@@ -1,6 +1,6 @@
-package net.gigabit101.easybreeding.mixin;
+package net.gigabit101.autobreed.mixin;
 
-import net.gigabit101.easybreeding.EatDroppedFoodGoal;
+import net.gigabit101.autobreed.EatDroppedFoodGoal;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;

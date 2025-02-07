@@ -14,7 +14,7 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "easybreeding.mixins.json"
+        mixinConfig "autobreed.mixins.json"
     }
 }
 

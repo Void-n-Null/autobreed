@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "easybreeding",
+  "id": "autobreed",
   "version": "${version}",
-  "name": "EasyBreeding",
+  "name": "AutoBreed",
   "description": "Easy Breeding adds the ability to breed animals (excepting Ocelots and Wolves) by tossing their breeding food on the ground near them.",
   "authors": [
     "Gigabit101, Icynewyear"
   ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/easy-breeding",
-    "sources": "https://github.com/icynewyear/easybreeding"
+    "sources": "https://github.com/icynewyear/autobreed"
   },
   "license": "GNU GENERAL PUBLIC LICENSE",
   "icon": "",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.gigabit101.easybreeding.fabric.EasyBreedingFabric"
+      "net.gigabit101.autobreed.fabric.AutoBreedFabric"
     ]
   },
   "depends": {
@@ -27,6 +27,6 @@
     "flamingo": "*"
   },
   "mixins": [
-    "easybreeding.mixins.jsonold"
+    "autobreed.mixins.json"
   ]
 }

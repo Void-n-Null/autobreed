@@ -1,9 +1,11 @@
 {
   "required": true,
-  "package": "net.gigabit101.easybreeding.mixin",
+  "package": "net.gigabit101.autobreed.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AnimalMixin"
+  ],
+  "server": [
   ],
   "injectors": {
     "defaultRequire": 1
