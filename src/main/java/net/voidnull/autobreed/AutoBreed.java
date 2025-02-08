@@ -27,13 +27,11 @@ public class AutoBreed {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("AutoBreed Common Setup");
     }
     
     @SubscribeEvent
     public void onAnimalJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof Animal animal) {
-            LOGGER.info("Adding food goals to animal: {}", animal);
             
             TargetFoodGoal targetGoal = new TargetFoodGoal(animal);
             ConsumeFoodGoal consumeGoal = new ConsumeFoodGoal(animal, targetGoal);
@@ -41,8 +39,6 @@ public class AutoBreed {
             // Make food goals high priority
             animal.goalSelector.addGoal(2, targetGoal);   // Very high priority for movement
             animal.goalSelector.addGoal(1, consumeGoal);  // Highest priority for consumption
-            
-            LOGGER.info("Added food goals to animal: {} with priorities 1 and 2", animal);
         }
     }
 } 

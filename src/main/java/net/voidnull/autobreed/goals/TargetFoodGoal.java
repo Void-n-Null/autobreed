@@ -79,7 +79,6 @@ public class TargetFoodGoal extends Goal {
     @Override
     public boolean canUse() {
         if (targetEntity != null && targetEntity.isAlive() && canMoveToTarget()) {
-            LOGGER.debug("Continuing to target existing food source for {}", animal);
             return true;
         }
         
@@ -87,7 +86,6 @@ public class TargetFoodGoal extends Goal {
         if (newTarget == null) return false;
         
         targetEntity = newTarget;
-        LOGGER.debug("Found new food source {} for {}", targetEntity, animal);
         return canMoveToTarget();
     }
 
@@ -101,7 +99,6 @@ public class TargetFoodGoal extends Goal {
 
     @Override
     public void start() {
-        LOGGER.debug("Starting movement to food source {} for {}", targetEntity, animal);
         this.isRunning = true;
         this.timeToRecalcPath = 0;
         updatePath();
@@ -109,7 +106,6 @@ public class TargetFoodGoal extends Goal {
 
     @Override
     public void stop() {
-        LOGGER.debug("Stopping movement for {}", animal);
         this.isRunning = false;
         this.targetEntity = null;
         this.pathNav.stop();
@@ -139,7 +135,6 @@ public class TargetFoodGoal extends Goal {
         if (--this.timeToRecalcPath <= 0) {
             this.timeToRecalcPath = 10;
             if (this.pathNav.isDone()) {
-                LOGGER.debug("Updating path to food source {} for {}", targetEntity, animal);
                 updatePath();
             }
         }
