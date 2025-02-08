@@ -1,14 +1,22 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/yourusername/autobreed/issues"
+issueTrackerURL="https://github.com/Void-n-Null/autobreed/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-authors="${mod_authors}"
-description='''${mod_description}'''
+authors="VoidNull, based on work by icynewyear and gigabit101"
+description='''
+A Minecraft mod that enhances animal breeding mechanics by allowing animals to automatically eat food from the ground to grow up (if they're babies) or enter love mode (if they're adults).
+
+Features:
+- Animals automatically seek out and eat food items dropped on the ground
+- Animals target food items displayed in item frames (good for auto farms)
+- Baby animals grow gradually when eating food
+- Adult animals enter love mode when eating food (if able to breed)
+'''
 
 [[dependencies.${mod_id}]]
     modId="neoforge"

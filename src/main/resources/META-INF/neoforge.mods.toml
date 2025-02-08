@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 
-# A version range to match for said mod loader - for regular FML @Mod it will be the FML version. This is currently 2.
+# A version range to match for said mod loader - for regular FML @Mod it will be the FML version.
 loaderVersion="${loader_version_range}" #mandatory
 
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
@@ -14,7 +14,7 @@ loaderVersion="${loader_version_range}" #mandatory
 license="${mod_license}"
 
 # A URL to refer people to when problems occur with this mod
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+issueTrackerURL="https://github.com/Void-n-Null/autobreed/issues"
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
@@ -28,27 +28,32 @@ version="${mod_version}" #mandatory
 # A display name for the mod
 displayName="${mod_name}" #mandatory
 
-# A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-
 # A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://github.com/Void-n-Null/autobreed" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
 #logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-#credits="" #optional
+credits="Based on EasyBreeding by icynewyear and gigabit101" #optional
 
 # A text field displayed in the mod UI
-authors="${mod_authors}" #optional
+authors="VoidNull, based on work by icynewyear and gigabit101" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''${mod_description}'''
+description='''
+A Minecraft mod that enhances animal breeding mechanics by allowing animals to automatically eat food from the ground to grow up (if they're babies) or enter love mode (if they're adults).
+
+Features:
+- Animals automatically seek out and eat food items dropped on the ground
+- Animals target food items displayed in item frames (good for auto farms)
+- Baby animals grow gradually when eating food
+- Adult animals enter love mode when eating food (if able to breed)
+'''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+[mixin]
+    config="autobreed.mixins.json"
 
 # The [[accessTransformers]] block allows you to declare where your AT file is.
 # If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
