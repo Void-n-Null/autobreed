@@ -6,6 +6,8 @@ AutoBreed is a Minecraft mod that enhances animal breeding mechanics by allowing
 
 - Animals will automatically seek out and eat food items dropped on the ground
 - Animals will also target food items displayed in item frames (good for auto farms)
+- Animals that eat wheat (like cows, sheep, etc.) can eat from hay bales directly
+- Hay bales can be eaten 10 times before they disappear.
 - Baby animals will grow gradually when eating food (aproxomately 10 seconds of growth per food item)
 - Adult animals will enter love mode when eating food (if they're able to breed)
 
