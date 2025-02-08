@@ -1,4 +1,4 @@
-package net.gigabit101.autobreed;
+package net.voidnull.autobreed;
 
 public class AutoBreed
 {
