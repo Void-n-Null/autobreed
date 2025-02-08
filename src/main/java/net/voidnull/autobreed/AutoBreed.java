@@ -8,6 +8,8 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.minecraft.world.entity.animal.Animal;
 import net.voidnull.autobreed.goals.EatDroppedFoodGoal;
+import net.voidnull.autobreed.goals.TargetFoodGoal;
+import net.voidnull.autobreed.goals.ConsumeFoodGoal;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
@@ -31,10 +33,18 @@ public class AutoBreed {
     }
     
     @SubscribeEvent
-    public void onEntityJoinWorld(EntityJoinLevelEvent event) {
+    public void onAnimalJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof Animal animal) {
-            animal.goalSelector.addGoal(3, new EatDroppedFoodGoal(animal));
-            LOGGER.debug("Added EatDroppedFoodGoal to {}", animal);
+            LOGGER.info("Adding food goals to animal: {}", animal);
+            
+            TargetFoodGoal targetGoal = new TargetFoodGoal(animal);
+            ConsumeFoodGoal consumeGoal = new ConsumeFoodGoal(animal, targetGoal);
+            
+            // Make food goals high priority
+            animal.goalSelector.addGoal(2, targetGoal);   // Very high priority for movement
+            animal.goalSelector.addGoal(1, consumeGoal);  // Highest priority for consumption
+            
+            LOGGER.info("Added food goals to animal: {} with priorities 1 and 2", animal);
         }
     }
 } 
