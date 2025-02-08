@@ -15,15 +15,15 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
-group = mod_group_id
+version = 1.0
+group = "net.voidnull.autobreed"
 
 repositories {
     mavenLocal()
 }
 
 base {
-    archivesName = mod_id
+    archivesName = "autobreed"
 }
 
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
