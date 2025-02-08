@@ -1,27 +1,47 @@
+# AutoBreed
 
-Installation information
-=======
+AutoBreed is a Minecraft mod that enhances animal breeding mechanics by allowing animals to automatically eat food from the ground to grow up (if they're babies) or enter love mode (if they're adults).
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions at [github](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Features
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+- Animals will automatically seek out and eat food items dropped on the ground
+- Animals will also target food items displayed in item frames (good for auto farms)
+- Baby animals will grow gradually when eating food (aproxomately 10 seconds of growth per food item)
+- Adult animals will enter love mode when eating food (if they're able to breed)
 
-> **Note**: For Eclipse, use tasks in `Launch Group` instead of ones founds in `Java Application`. A preparation task must run before launching the game. NeoGradle uses launch groups to do these subsequently.
+## Version Support
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+The main branch targets the latest version of Minecraft with NeoForge. For previous Minecraft versions, check the respective version branches (when available).
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+Currently NeoForge specific, but ports to other mod loaders may be considered in the future.
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+## Credits
+
+This mod is a heavily rewritten fork of [EasyBreeding](https://github.com/icynewyear/easybreeding) by [@icynewyear](https://github.com/icynewyear) and [@gigabit101](https://github.com/gigabit101).
+
+## License
+
+This project is licensed under LGPL-3.0 - see the [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) files for details.
+
+## Installation
+
+1. Install NeoForge for the appropriate Minecraft version
+2. Download the latest release for your Minecraft version
+3. Place the .jar file in your mods folder
+4. Launch Minecraft and enjoy!
+
+## Building from Source
+
+```bash
+./gradlew build
+```
+
+The built jar will be in `build/libs/`.
+
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+## Issues and Support
+
+If you find any bugs or have feature requests, please open an issue on the GitHub repository.
