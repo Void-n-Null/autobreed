@@ -48,4 +48,8 @@ allprojects {
     java {
         withSourcesJar()
     }
+
+    tasks.withType(AbstractCopyTask) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 }

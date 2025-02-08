@@ -80,3 +80,7 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+
+tasks.withType(AbstractCopyTask) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
