@@ -2,12 +2,10 @@ package net.voidnull.autobreed;
 
 import net.neoforged.fml.common.Mod;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.minecraft.world.entity.animal.Animal;
-import net.voidnull.autobreed.goals.EatDroppedFoodGoal;
 import net.voidnull.autobreed.goals.TargetFoodGoal;
 import net.voidnull.autobreed.goals.ConsumeFoodGoal;
 import org.slf4j.Logger;
