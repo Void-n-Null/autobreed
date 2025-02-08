@@ -3,16 +3,19 @@ package net.voidnull.autobreed.goals;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 public class TargetFoodGoal extends Goal {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Animal animal;
-    private ItemEntity targetFood;
+    private Entity targetEntity;  // Can be either ItemEntity or ItemFrame
     private final PathNavigation pathNav;
     private final double speedModifier;
     private static final double TARGET_DISTANCE = 1.0D;
@@ -33,18 +36,40 @@ public class TargetFoodGoal extends Goal {
     private boolean canMoveToTarget() {
         return !animal.isLeashed() && 
                animal.onGround() &&
-               targetFood != null &&
-               animal.isFood(targetFood.getItem());
+               targetEntity != null &&
+               isValidFoodSource(targetEntity);
     }
 
-    private ItemEntity findFood() {
-        List<ItemEntity> list = this.animal.level().getEntitiesOfClass(ItemEntity.class,
+    private boolean isValidFoodSource(Entity entity) {
+        if (entity instanceof ItemEntity itemEntity) {
+            return animal.isFood(itemEntity.getItem());
+        } else if (entity instanceof ItemFrame itemFrame) {
+            return animal.isFood(itemFrame.getItem());
+        }
+        return false;
+    }
+
+    private Entity findFood() {
+        // Search for dropped items
+        List<ItemEntity> items = this.animal.level().getEntitiesOfClass(ItemEntity.class,
             this.animal.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
         
-        if (list.isEmpty()) return null;
-
-        return list.stream()
+        Optional<ItemEntity> nearestItem = items.stream()
             .filter(itemEntity -> animal.isFood(itemEntity.getItem()))
+            .min((a, b) -> Double.compare(
+                animal.distanceToSqr(a),
+                animal.distanceToSqr(b)));
+
+        if (nearestItem.isPresent()) {
+            return nearestItem.get();
+        }
+
+        // If no dropped items, search for item frames
+        List<ItemFrame> frames = this.animal.level().getEntitiesOfClass(ItemFrame.class,
+            this.animal.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
+        
+        return frames.stream()
+            .filter(frame -> animal.isFood(frame.getItem()))
             .min((a, b) -> Double.compare(
                 animal.distanceToSqr(a),
                 animal.distanceToSqr(b)))
@@ -53,30 +78,30 @@ public class TargetFoodGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (targetFood != null && targetFood.isAlive() && canMoveToTarget()) {
-            LOGGER.debug("Continuing to target existing food for {}", animal);
+        if (targetEntity != null && targetEntity.isAlive() && canMoveToTarget()) {
+            LOGGER.debug("Continuing to target existing food source for {}", animal);
             return true;
         }
         
-        ItemEntity newTarget = findFood();
+        Entity newTarget = findFood();
         if (newTarget == null) return false;
         
-        targetFood = newTarget;
-        LOGGER.debug("Found new food target {} for {}", targetFood, animal);
+        targetEntity = newTarget;
+        LOGGER.debug("Found new food source {} for {}", targetEntity, animal);
         return canMoveToTarget();
     }
 
     @Override
     public boolean canContinueToUse() {
         return isRunning && 
-               targetFood != null && 
-               targetFood.isAlive() && 
+               targetEntity != null && 
+               targetEntity.isAlive() && 
                canMoveToTarget();
     }
 
     @Override
     public void start() {
-        LOGGER.debug("Starting movement to food {} for {}", targetFood, animal);
+        LOGGER.debug("Starting movement to food source {} for {}", targetEntity, animal);
         this.isRunning = true;
         this.timeToRecalcPath = 0;
         updatePath();
@@ -86,26 +111,26 @@ public class TargetFoodGoal extends Goal {
     public void stop() {
         LOGGER.debug("Stopping movement for {}", animal);
         this.isRunning = false;
-        this.targetFood = null;
+        this.targetEntity = null;
         this.pathNav.stop();
     }
 
     private void updatePath() {
-        if (targetFood != null) {
-            this.pathNav.moveTo(targetFood, this.speedModifier);
+        if (targetEntity != null) {
+            this.pathNav.moveTo(targetEntity, this.speedModifier);
         }
     }
 
     @Override
     public void tick() {
-        if (targetFood == null || !targetFood.isAlive()) {
+        if (targetEntity == null || !targetEntity.isAlive()) {
             stop();
             return;
         }
 
-        // Look at the food
+        // Look at the food source
         this.animal.getLookControl().setLookAt(
-            targetFood,
+            targetEntity,
             (float)(this.animal.getMaxHeadXRot() + 20),
             (float)this.animal.getMaxHeadXRot()
         );
@@ -114,18 +139,18 @@ public class TargetFoodGoal extends Goal {
         if (--this.timeToRecalcPath <= 0) {
             this.timeToRecalcPath = 10;
             if (this.pathNav.isDone()) {
-                LOGGER.debug("Updating path to food {} for {}", targetFood, animal);
+                LOGGER.debug("Updating path to food source {} for {}", targetEntity, animal);
                 updatePath();
             }
         }
     }
 
     public ItemEntity getTargetFood() {
-        return targetFood;
+        return targetEntity instanceof ItemEntity ? (ItemEntity)targetEntity : null;
     }
 
     public boolean isCloseEnoughToTarget() {
-        if (targetFood == null) return false;
-        return animal.distanceTo(targetFood) <= TARGET_DISTANCE;
+        if (targetEntity == null) return false;
+        return animal.distanceTo(targetEntity) <= TARGET_DISTANCE;
     }
-} 
+}
