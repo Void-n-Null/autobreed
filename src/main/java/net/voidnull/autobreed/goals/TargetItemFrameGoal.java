@@ -2,7 +2,7 @@ package net.voidnull.autobreed.goals;
 
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import java.util.EnumSet;
@@ -11,21 +11,21 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
-public class TargetFoodGoal extends Goal {
+public class TargetItemFrameGoal extends Goal {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Animal animal;
-    private ItemEntity targetEntity;
+    private ItemFrame targetEntity;
     private final PathNavigation pathNav;
     private final double speedModifier;
     private static final double TARGET_DISTANCE = 1.0D;
     private int timeToRecalcPath;
     private boolean isRunning;
 
-    public TargetFoodGoal(Animal animal) {
+    public TargetItemFrameGoal(Animal animal) {
         this(animal, 1.0D);
     }
 
-    public TargetFoodGoal(Animal animal, double speedModifier) {
+    public TargetItemFrameGoal(Animal animal, double speedModifier) {
         this.animal = animal;
         this.speedModifier = speedModifier;
         this.pathNav = animal.getNavigation();
@@ -39,16 +39,16 @@ public class TargetFoodGoal extends Goal {
                isValidFoodSource(targetEntity);
     }
 
-    private boolean isValidFoodSource(ItemEntity itemEntity) {
-        return animal.isFood(itemEntity.getItem());
+    private boolean isValidFoodSource(ItemFrame itemFrame) {
+        return animal.isFood(itemFrame.getItem());
     }
 
-    private ItemEntity findFood() {
-        List<ItemEntity> items = this.animal.level().getEntitiesOfClass(ItemEntity.class,
+    private ItemFrame findFood() {
+        List<ItemFrame> frames = this.animal.level().getEntitiesOfClass(ItemFrame.class,
             this.animal.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
         
-        return items.stream()
-            .filter(itemEntity -> animal.isFood(itemEntity.getItem()))
+        return frames.stream()
+            .filter(frame -> animal.isFood(frame.getItem()))
             .min((a, b) -> Double.compare(
                 animal.distanceToSqr(a),
                 animal.distanceToSqr(b)))
@@ -61,7 +61,7 @@ public class TargetFoodGoal extends Goal {
             return true;
         }
         
-        ItemEntity newTarget = findFood();
+        ItemFrame newTarget = findFood();
         if (newTarget == null) return false;
         
         targetEntity = newTarget;
@@ -119,7 +119,7 @@ public class TargetFoodGoal extends Goal {
         }
     }
 
-    public ItemEntity getTargetFood() {
+    public ItemFrame getTargetItemFrame() {
         return targetEntity;
     }
 
@@ -127,4 +127,4 @@ public class TargetFoodGoal extends Goal {
         if (targetEntity == null) return false;
         return animal.distanceTo(targetEntity) <= TARGET_DISTANCE;
     }
-}
+} 

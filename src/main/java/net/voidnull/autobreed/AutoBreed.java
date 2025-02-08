@@ -8,6 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Items;
 import net.voidnull.autobreed.goals.TargetFoodGoal;
+import net.voidnull.autobreed.goals.TargetItemFrameGoal;
 import net.voidnull.autobreed.goals.ConsumeFoodGoal;
 import net.voidnull.autobreed.goals.TargetHayBlockGoal;
 import net.voidnull.autobreed.goals.ConsumeHayBaleGoal;
@@ -44,6 +45,11 @@ public class AutoBreed {
             // Add food goals
             animal.goalSelector.addGoal(1, consumeFoodGoal);   // Highest priority for food consumption
             animal.goalSelector.addGoal(2, targetFoodGoal);    // High priority for food movement
+            
+            //Seperate goal for item frames.
+            //Leave it at a lower priority than food goals.
+            //When the animal has nothing better to do, it will go after item frames.
+            animal.goalSelector.addGoal(3, new TargetItemFrameGoal(animal));
             
             // Only add hay bale goals for animals that eat wheat
             if (animal.isFood(Items.WHEAT.getDefaultInstance())) {
