@@ -32,7 +32,7 @@ displayName="${mod_name}" #mandatory
 displayURL="https://github.com/Void-n-Null/autobreed" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="AutoBreedIcon128.png" #optional
 
 # A text field displayed in the mod UI
 credits="Based on EasyBreeding by icynewyear and gigabit101" #optional
@@ -47,6 +47,8 @@ A Minecraft mod that enhances animal breeding mechanics by allowing animals to a
 Features:
 - Animals automatically seek out and eat food items dropped on the ground
 - Animals target food items displayed in item frames (good for auto farms)
+- Animals that eat wheat (like cows and sheep) can eat directly from hay bales
+- Each hay bale provides 10 servings before disappearing
 - Baby animals grow gradually when eating food
 - Adult animals enter love mode when eating food (if able to breed)
 '''
