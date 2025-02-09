@@ -1,6 +1,10 @@
 package net.voidnull.autobreed;
 
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -16,23 +20,30 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.neoforge.common.NeoForge;
 
-@Mod(AutoBreed.MOD_ID)
+@Mod(AutoBreed.MODID)
 public class AutoBreed {
-    public static final String MOD_ID = "autobreed";
+    public static final String MODID = "autobreed";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public AutoBreed(IEventBus modEventBus) {
-        LOGGER.info("Initializing AutoBreed Mod");
+        LOGGER.info("AutoBreed mod initialization starting...");
         
-        // Register ourselves for mod events
+        // Register our configuration
+        ModContainer container = ModLoadingContext.get().getActiveContainer();
+        container.registerConfig(ModConfig.Type.COMMON, AutoBreedConfig.SPEC);
+        
+        // Register for mod events
         modEventBus.addListener(this::commonSetup);
         
         // Register for forge events
-        NeoForge.EVENT_BUS.register(AutobreedEventHandler.class);
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(new AutobreedEventHandler());
+        
+        LOGGER.info("AutoBreed mod initialization completed.");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        // Any common setup code goes here
     }
     
     @SubscribeEvent
@@ -46,7 +57,7 @@ public class AutoBreed {
             animal.goalSelector.addGoal(1, consumeFoodGoal);   // Highest priority for food consumption
             animal.goalSelector.addGoal(2, targetFoodGoal);    // High priority for food movement
             
-            //Seperate goal for item frames.
+            //Separate goal for item frames.
             //Leave it at a lower priority than food goals.
             //When the animal has nothing better to do, it will go after item frames.
             animal.goalSelector.addGoal(3, new TargetItemFrameGoal(animal));
