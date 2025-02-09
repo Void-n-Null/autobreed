@@ -28,8 +28,10 @@ public class AutoBreed {
     public AutoBreed(IEventBus modEventBus) {
         LOGGER.info("AutoBreed mod initialization starting...");
         
-        // Register our configuration
+        // Get the mod container from the ModLoadingContext
         ModContainer container = ModLoadingContext.get().getActiveContainer();
+        
+        // Register our configuration
         container.registerConfig(ModConfig.Type.COMMON, AutoBreedConfig.SPEC);
         
         // Register for mod events
@@ -37,7 +39,7 @@ public class AutoBreed {
         
         // Register for forge events
         NeoForge.EVENT_BUS.register(this);
-        NeoForge.EVENT_BUS.register(new AutobreedEventHandler());
+        NeoForge.EVENT_BUS.register(new HayBaleEventHandler());  // Only need the hay bale handler now
         
         LOGGER.info("AutoBreed mod initialization completed.");
     }

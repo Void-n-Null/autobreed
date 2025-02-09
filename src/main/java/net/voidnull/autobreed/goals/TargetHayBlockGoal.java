@@ -11,6 +11,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.voidnull.autobreed.HayBaleCache;
+import net.voidnull.autobreed.AutoBreedConfig;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -46,34 +48,12 @@ public class TargetHayBlockGoal extends Goal {
     }
 
     private BlockPos findHayBlock() {
-        Vec3 animalPos = this.animal.position();
-        
-        AABB searchBox = new AABB(
-            animalPos.x - 8.0D, animalPos.y - 4.0D, animalPos.z - 8.0D,
-            animalPos.x + 8.0D, animalPos.y + 4.0D, animalPos.z + 8.0D
+        // Use our cache system to find the nearest hay bale
+        // The search radius is configured in AutoBreedConfig
+        return HayBaleCache.findNearestHayBale(
+            animal.blockPosition(),
+            AutoBreedConfig.HAY_SEARCH_RADIUS.get()
         );
-
-        BlockPos closest = null;
-        double closestDist = Double.MAX_VALUE;
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-
-        // Manual search in the box
-        for (int x = (int)searchBox.minX; x <= (int)searchBox.maxX; x++) {
-            for (int y = (int)searchBox.minY; y <= (int)searchBox.maxY; y++) {
-                for (int z = (int)searchBox.minZ; z <= (int)searchBox.maxZ; z++) {
-                    mutable.set(x, y, z);
-                    if (animal.level().getBlockState(mutable).is(Blocks.HAY_BLOCK)) {
-                        double dist = mutable.distSqr(animal.blockPosition());
-                        if (dist < closestDist) {
-                            closestDist = dist;
-                            closest = mutable.immutable();
-                        }
-                    }
-                }
-            }
-        }
-        
-        return closest;
     }
 
     @Override
@@ -88,6 +68,12 @@ public class TargetHayBlockGoal extends Goal {
         if (targetPos != null && canMoveToTarget()) {
             return true;
         }
+
+        // NEW PART: Quick check before expensive search
+        if (!HayBaleCache.hasHayBalesNearby(animal.blockPosition(), AutoBreedConfig.HAY_SEARCH_RADIUS.get())) {
+            return false;  // No hay bales nearby, don't even bother searching
+        }
+        
         
         BlockPos newTarget = findHayBlock();
         if (newTarget == null) return false;

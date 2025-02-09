@@ -29,45 +29,37 @@ public class ConsumeHayBaleGoal extends Goal {
         this.setFlags(EnumSet.of(Goal.Flag.LOOK));
     }
 
-       @Override
+    @Override
     public boolean canUse() {
         if (cooldown > 0) {
             cooldown--;
-            LOGGER.debug("{} on cooldown: {}", animal.getName().getString(), cooldown);
             return false;
         }
 
         if (!targetGoal.isCloseEnoughToTarget()) {
-            LOGGER.debug("{} not close enough to target", animal.getName().getString());
             return false;
         }
         
         BlockPos hayPos = targetGoal.getTargetPos();
         if (hayPos == null) {
-            LOGGER.debug("{} has no target hay position", animal.getName().getString());
             return false;
         }
         
         BlockState state = animal.level().getBlockState(hayPos);
         if (!state.is(Blocks.HAY_BLOCK)) {
-            LOGGER.debug("{} target is not a hay block at {}", animal.getName().getString(), hayPos);
             return false;
         }
 
         // Check if we're actually on top of or adjacent to the hay block
         BlockPos animalPos = animal.blockPosition();
         if (!isNextToOrAbove(animalPos, hayPos)) {
-            LOGGER.debug("{} not next to or above hay block. Animal at {}, hay at {}", 
-                animal.getName().getString(), animalPos, hayPos);
             return false;
         }
 
         targetHayBale = hayPos;
-        LOGGER.debug("Target hay bale set to {} for {}", hayPos, animal.getName().getString());
 
         // Different conditions for babies and adults
         if (animal.isBaby()) {
-            LOGGER.debug("{} is baby, can eat hay", animal.getName().getString());
             return true; // Babies can always eat to grow
         } else {
             boolean canEat = !animal.isInLove() && 
@@ -76,13 +68,9 @@ public class ConsumeHayBaleGoal extends Goal {
                            animal.getAge() == 0 &&
                            animal.isFood(Items.WHEAT.getDefaultInstance());
             
-            LOGGER.debug("{} adult conditions: inLove={}, canFallInLove={}, canBreed={}, age={}, eatsWheat={}", 
-                animal.getName().getString(),
-                animal.isInLove(),
-                animal.canFallInLove(),
-                animal.canBreed(),
-                animal.getAge(),
-                animal.isFood(Items.WHEAT.getDefaultInstance()));
+            if (canEat) {
+                LOGGER.debug("{} found hay bale to eat at {}", animal.getName().getString(), hayPos);
+            }
             
             return canEat;
         }
@@ -90,7 +78,6 @@ public class ConsumeHayBaleGoal extends Goal {
 
     private boolean isNextToOrAbove(BlockPos animalPos, BlockPos hayPos) {
         if (animalPos.equals(hayPos.above())) {
-            LOGGER.debug("{} is above hay block", animal.getName().getString());
             return true; // On top
         }
         
@@ -99,10 +86,6 @@ public class ConsumeHayBaleGoal extends Goal {
                            animalPos.equals(hayPos.south()) ||
                            animalPos.equals(hayPos.east()) ||
                            animalPos.equals(hayPos.west());
-        
-        if (isAdjacent) {
-            LOGGER.debug("{} is adjacent to hay block", animal.getName().getString());
-        }
         
         return isAdjacent;
     }
