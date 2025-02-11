@@ -16,10 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.voidnull.autobreed.fabric.ExampleModFabric"
-    ],
-    "client": [
-      "net.voidnull.autobreed.fabric.client.ExampleModFabricClient"
+      "net.voidnull.autobreed.fabric.FabricAutoBreed"
     ]
   },
   "mixins": [
