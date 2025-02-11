@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[49,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "autobreed"
+version = "${version}"
+displayName = "Auto Breed"
+authors = "Me!"
+description = '''
+This is an example description! Tell everyone what your mod is about!
+'''
+#logoFile = ""
+
+[[dependencies.autobreed]]
+modId = "forge"
+mandatory = true
+versionRange = "[49,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.autobreed]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.autobreed]]
+modId = "architectury"
+mandatory = true
+versionRange = "[11.1.17,)"
+ordering = "AFTER"
+side = "BOTH"
