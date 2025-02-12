@@ -93,6 +93,10 @@ public class TargetWheatCropGoal extends AbstractTargetGoal<BlockPos> {
             return false;
         }
         
+        if(animal.isBaby()) {
+            return canMoveToTarget();
+        }
+
         // Then check breeding conditions
         if(animal.isInLove()) {
             LOGGER.debug("{} can't target wheat: in love", animal);
@@ -104,6 +108,10 @@ public class TargetWheatCropGoal extends AbstractTargetGoal<BlockPos> {
         }
         if(animal.canBreed()) {
             LOGGER.debug("{} can't target wheat: can breed", animal);
+            return false;
+        }
+        if(animal.getAge() != 0) {
+            LOGGER.debug("{} can't target wheat: wrong age", animal);
             return false;
         }
         if(!animal.isFood(Items.WHEAT.getDefaultInstance())) {
