@@ -11,7 +11,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = 1.0
+version = 1.1
 group = "net.voidnull.autobreed"
 
 repositories {
