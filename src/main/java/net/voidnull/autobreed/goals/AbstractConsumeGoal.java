@@ -4,12 +4,12 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.voidnull.autobreed.AutoBreedConfig;
 import java.util.EnumSet;
 
 public abstract class AbstractConsumeGoal<T, G extends AbstractTargetGoal<T>> extends Goal {
     protected final Animal animal;
     protected final G targetGoal;
-    protected static final int BABY_GROWTH_TICKS = 200; // 10 seconds worth of growth
     protected int cooldown = 0;
     protected T targetResource = null;
 
@@ -77,7 +77,7 @@ public abstract class AbstractConsumeGoal<T, G extends AbstractTargetGoal<T>> ex
 
         // Handle growth or breeding
         if (animal.isBaby()) {
-            animal.ageUp(BABY_GROWTH_TICKS);
+            animal.ageUp(AutoBreedConfig.BABY_GROWTH_BOOST_TICKS.get());
         } else {
             animal.setInLove(null);
         }
