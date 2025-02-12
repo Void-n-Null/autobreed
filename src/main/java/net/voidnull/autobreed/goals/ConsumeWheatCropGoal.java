@@ -4,6 +4,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.voidnull.autobreed.WheatCropDataManager;
+import net.voidnull.autobreed.AutoBreedConfig;
 
 public class ConsumeWheatCropGoal extends AbstractConsumeGoal<BlockPos, TargetWheatCropGoal> {
 
@@ -13,7 +14,7 @@ public class ConsumeWheatCropGoal extends AbstractConsumeGoal<BlockPos, TargetWh
 
     @Override
     protected int getEatingCooldownTicks() {
-        return 0; // No cooldown needed since this is adult-only
+        return AutoBreedConfig.FOOD_EATING_COOLDOWN_TICKS.get(); // Use same cooldown as food items
     }
 
     @Override

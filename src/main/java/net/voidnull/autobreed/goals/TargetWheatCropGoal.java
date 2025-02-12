@@ -93,7 +93,10 @@ public class TargetWheatCropGoal extends AbstractTargetGoal<BlockPos> {
             return false;
         }
         
+        
+
         if(animal.isBaby()) {
+            targetEntity = newTarget;
             return canMoveToTarget();
         }
 

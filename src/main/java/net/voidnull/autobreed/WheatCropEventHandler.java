@@ -4,6 +4,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.CropBlock;
 
 /**
  * Event handler for wheat crop management.
@@ -46,14 +49,15 @@ public class WheatCropEventHandler {
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         if (event.getLevel().isClientSide()) return;  // Server-side only
         
-        if (event.getPlacedBlock().is(Blocks.WHEAT)) {
+        BlockState state = event.getPlacedBlock();
+        if (state.is(Blocks.WHEAT)) {
             BlockPos pos = event.getPos();
             LOGGER.debug("Wheat crop placed at {}", pos);
             WheatCropCache.addWheatCrop(pos);
             WheatCropDataManager.addWheatCrop(pos);
-            // Update growth state immediately
+            // Update growth state immediately with the placed state
             if (event.getLevel() instanceof Level level) {
-                WheatCropDataManager.updateGrowthState(pos, level);
+                WheatCropDataManager.updateGrowthState(pos, level, state);
             }
         }
     }
@@ -74,9 +78,13 @@ public class WheatCropEventHandler {
     public void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
         if (event.getLevel().isClientSide()) return;  // Server-side only
         
-        if (event.getState().is(Blocks.WHEAT) && event.getLevel() instanceof Level level) {
+        BlockState state = event.getState();
+        if (state.is(Blocks.WHEAT)) {
             BlockPos pos = event.getPos();
-            WheatCropDataManager.updateGrowthState(pos, level);
+            // Pass the current state directly rather than getting it from the world again
+            if (event.getLevel() instanceof Level level) {
+                WheatCropDataManager.updateGrowthState(pos, level, state);
+            }
         }
     }
 
@@ -148,5 +156,36 @@ public class WheatCropEventHandler {
         if (event.getLevel().isClientSide()) return;  // Server-side only
         LOGGER.debug("World unloading, clearing wheat crop cache");
         WheatCropCache.clear();
+    }
+
+    @SubscribeEvent
+    public void onCropGrowPre(CropGrowEvent.Pre event) {
+        if (event.getLevel().isClientSide()) return;  // Server-side only
+        
+        BlockState state = event.getState();
+        if (state.is(Blocks.WHEAT)) {
+            BlockPos pos = event.getPos();
+            LOGGER.debug("Wheat crop attempting to grow at {}", pos);
+        }
+    }
+
+    @SubscribeEvent
+    public void onCropGrowPost(CropGrowEvent.Post event) {
+        if (event.getLevel().isClientSide()) return;  // Server-side only
+        
+        BlockState newState = event.getState();
+        BlockState originalState = event.getOriginalState();
+        if (newState.is(Blocks.WHEAT)) {
+            BlockPos pos = event.getPos();
+            LOGGER.debug("Wheat crop grew at {} from age {} to {}", 
+                pos,
+                originalState.getValue(CropBlock.AGE),
+                newState.getValue(CropBlock.AGE));
+            
+            // Update the growth state with the new state
+            if (event.getLevel() instanceof Level level) {
+                WheatCropDataManager.updateGrowthState(pos, level, newState);
+            }
+        }
     }
 } 

@@ -30,13 +30,12 @@ public class WheatCropDataManager {
         return wheatCrops.getOrDefault(pos, false);
     }
 
-    public static void updateGrowthState(BlockPos pos, Level level) {
+    public static void updateGrowthState(BlockPos pos, Level level, BlockState state) {
         if (!wheatCrops.containsKey(pos)) {
             LOGGER.debug("Tried to update growth state for untracked wheat crop at {}", pos);
             return;
         }
         
-        BlockState state = level.getBlockState(pos);
         if (state.is(Blocks.WHEAT)) {
             CropBlock cropBlock = (CropBlock) Blocks.WHEAT;
             boolean isFullyGrown = cropBlock.isMaxAge(state);
@@ -47,6 +46,11 @@ public class WheatCropDataManager {
                 LOGGER.debug("Wheat crop at {} growth state changed: isFullyGrown={}", pos, isFullyGrown);
             }
         }
+    }
+
+    // Keep old method for compatibility with other callers
+    public static void updateGrowthState(BlockPos pos, Level level) {
+        updateGrowthState(pos, level, level.getBlockState(pos));
     }
 
     public static void consumeWheatCrop(BlockPos pos, Level level) {
