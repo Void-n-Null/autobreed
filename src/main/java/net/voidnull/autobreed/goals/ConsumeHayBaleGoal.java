@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.particles.ParticleTypes;
 import net.voidnull.autobreed.HayBaleDataManager; // Import the data manager
 import java.util.EnumSet;
 import org.slf4j.Logger;

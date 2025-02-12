@@ -3,29 +3,19 @@ package net.voidnull.autobreed.goals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.voidnull.autobreed.HayBaleCache;
 import net.voidnull.autobreed.AutoBreedConfig;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 
 public class TargetHayBlockGoal extends Goal {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private final Animal animal;
     private BlockPos targetPos;  // Using BlockPos for hay blocks
     private final PathNavigation pathNav;
     private final double speedModifier;
-    private static final double TARGET_DISTANCE = 1.0D;
     private int timeToRecalcPath;
     private boolean isRunning;
 

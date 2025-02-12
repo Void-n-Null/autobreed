@@ -3,16 +3,11 @@ package net.voidnull.autobreed.goals;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 
 public class TargetFoodGoal extends Goal {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private final Animal animal;
     private ItemEntity targetEntity;
     private final PathNavigation pathNav;
