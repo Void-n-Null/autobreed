@@ -3,12 +3,11 @@ package net.voidnull.autobreed.goals;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.phys.Vec3;
 import java.util.EnumSet;
 import java.util.List;
 
-public class TargetFoodGoal extends AbstractTargetGoal<ItemEntity> {
+public class TargetFoodGoal extends AbstractEntityTargetGoal<ItemEntity> {
 
     public TargetFoodGoal(Animal animal) {
         this(animal, 1.0D);
@@ -20,8 +19,18 @@ public class TargetFoodGoal extends AbstractTargetGoal<ItemEntity> {
     }
 
     @Override
+    protected Class<ItemEntity> getTargetClass() {
+        return ItemEntity.class;
+    }
+
+    @Override
+    protected boolean isValidFoodSource(ItemEntity entity) {
+        return animal.isFood(entity.getItem());
+    }
+
+    @Override
     protected boolean isValidTarget(ItemEntity target) {
-        return animal.isFood(target.getItem());
+        return isValidFoodSource(target);
     }
 
     @Override

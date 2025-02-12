@@ -25,14 +25,15 @@ public class TargetHayBlockGoal extends AbstractTargetGoal<BlockPos> {
 
     @Override
     protected BlockPos findTarget() {
+        int searchRadius = AutoBreedConfig.SEARCH_RADIUS.get();
         // Quick check before expensive search
-        if (!HayBaleCache.hasHayBalesNearby(animal.blockPosition(), AutoBreedConfig.HAY_SEARCH_RADIUS.get())) {
+        if (!HayBaleCache.hasHayBalesNearby(animal.blockPosition(), searchRadius)) {
             return null;
         }
         
         return HayBaleCache.findNearestHayBale(
             animal.blockPosition(),
-            AutoBreedConfig.HAY_SEARCH_RADIUS.get()
+            searchRadius
         );
     }
 

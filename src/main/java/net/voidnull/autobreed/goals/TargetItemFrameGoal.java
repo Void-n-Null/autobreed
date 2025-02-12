@@ -2,10 +2,10 @@ package net.voidnull.autobreed.goals;
 
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.phys.Vec3;
-import java.util.List;
+import net.minecraft.world.entity.ai.goal.Goal;
+import java.util.EnumSet;
 
-public class TargetItemFrameGoal extends AbstractTargetGoal<ItemFrame> {
+public class TargetItemFrameGoal extends AbstractEntityTargetGoal<ItemFrame> {
 
     public TargetItemFrameGoal(Animal animal) {
         this(animal, 1.0D);
@@ -13,50 +13,22 @@ public class TargetItemFrameGoal extends AbstractTargetGoal<ItemFrame> {
 
     public TargetItemFrameGoal(Animal animal, double speedModifier) {
         super(animal, speedModifier);
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    }
+
+    @Override
+    protected Class<ItemFrame> getTargetClass() {
+        return ItemFrame.class;
+    }
+
+    @Override
+    protected boolean isValidFoodSource(ItemFrame entity) {
+        return animal.isFood(entity.getItem());
     }
 
     @Override
     protected boolean isValidTarget(ItemFrame target) {
-        return animal.isFood(target.getItem());
-    }
-
-    @Override
-    protected ItemFrame findTarget() {
-        List<ItemFrame> frames = this.animal.level().getEntitiesOfClass(ItemFrame.class,
-            this.animal.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
-        
-        return frames.stream()
-            .filter(frame -> animal.isFood(frame.getItem()))
-            .min((a, b) -> Double.compare(
-                animal.distanceToSqr(a),
-                animal.distanceToSqr(b)))
-            .orElse(null);
-    }
-
-    @Override
-    protected void updatePathToTarget() {
-        if (targetEntity != null) {
-            this.pathNav.moveTo(targetEntity, this.speedModifier);
-        }
-    }
-
-    @Override
-    protected void lookAtTarget() {
-        this.animal.getLookControl().setLookAt(
-            targetEntity,
-            (float)(this.animal.getMaxHeadXRot() + 20),
-            (float)this.animal.getMaxHeadXRot()
-        );
-    }
-
-    @Override
-    protected boolean isTargetValid() {
-        return targetEntity != null && targetEntity.isAlive();
-    }
-
-    @Override
-    protected Vec3 getTargetPos(ItemFrame target) {
-        return target.position();
+        return isValidFoodSource(target);
     }
 
     @Override

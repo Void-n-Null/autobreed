@@ -8,8 +8,8 @@ public class AutoBreedConfig {
 
     public static final ModConfigSpec.IntValue FOOD_EATING_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue BABY_GROWTH_BOOST_TICKS;
-    public static final ModConfigSpec.IntValue HAY_SEARCH_RADIUS;
-    public static final ModConfigSpec.IntValue HAY_SEARCH_VERTICAL_RADIUS;
+    public static final ModConfigSpec.IntValue SEARCH_RADIUS;
+    public static final ModConfigSpec.IntValue SEARCH_VERTICAL_RADIUS;
 
     static {
         BUILDER.comment("AutoBreed Configuration");
@@ -25,15 +25,15 @@ public class AutoBreedConfig {
                     "Default: 200 ticks (10 seconds of growth)")
             .defineInRange("babyGrowthBoostTicks", 200, 1, 6000);
 
-        HAY_SEARCH_RADIUS = BUILDER
-            .comment("How far (in blocks) animals will search horizontally for hay blocks",
+        SEARCH_RADIUS = BUILDER
+            .comment("How far (in blocks) animals will search horizontally for food sources (items, hay bales, item frames)",
                     "Default: 8 blocks")
-            .defineInRange("haySearchRadius", 8, 1, 16);
+            .defineInRange("searchRadius", 8, 1, 16);
 
-        HAY_SEARCH_VERTICAL_RADIUS = BUILDER
-            .comment("How far (in blocks) animals will search vertically for hay blocks",
+        SEARCH_VERTICAL_RADIUS = BUILDER
+            .comment("How far (in blocks) animals will search vertically for food sources",
                     "Default: 4 blocks")
-            .defineInRange("haySearchVerticalRadius", 4, 1, 8);
+            .defineInRange("searchVerticalRadius", 4, 1, 8);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

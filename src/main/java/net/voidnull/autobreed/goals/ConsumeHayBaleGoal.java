@@ -3,13 +3,9 @@ package net.voidnull.autobreed.goals;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
 import net.voidnull.autobreed.HayBaleDataManager;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 
 public class ConsumeHayBaleGoal extends AbstractConsumeGoal<BlockPos, TargetHayBlockGoal> {
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public ConsumeHayBaleGoal(Animal animal, TargetHayBlockGoal targetGoal) {
         super(animal, targetGoal);
