@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.phys.Vec3;
 import net.voidnull.autobreed.WheatCropCache;
-import net.voidnull.autobreed.WheatCropDataManager;
 import net.voidnull.autobreed.AutoBreedConfig;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;

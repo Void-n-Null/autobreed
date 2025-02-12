@@ -135,4 +135,12 @@ public class WheatCropCache {
         chunkToWheatMap.clear();
         scannedChunks.clear();
     }
+
+    /**
+     * Add multiple wheat crops from a chunk at once
+     */
+    public static void addWheatCropsInChunk(ChunkPos chunkPos, Set<BlockPos> positions) {
+        chunkToWheatMap.put(chunkPos, Collections.synchronizedSet(new HashSet<>(positions)));
+        scannedChunks.add(chunkPos);
+    }
 } 
