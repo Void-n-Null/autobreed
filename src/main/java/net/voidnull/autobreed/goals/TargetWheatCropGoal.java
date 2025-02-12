@@ -106,16 +106,8 @@ public class TargetWheatCropGoal extends AbstractTargetGoal<BlockPos> {
             LOGGER.debug("{} can't target wheat: can breed", animal);
             return false;
         }
-        if(animal.getAge() != 0) {
-            LOGGER.debug("{} can't target wheat: wrong age", animal);
-            return false;
-        }
         if(!animal.isFood(Items.WHEAT.getDefaultInstance())) {
             LOGGER.debug("{} can't target wheat: doesn't eat wheat", animal);
-            return false;
-        }
-        if(animal.isBaby()) {
-            LOGGER.debug("{} can't target wheat: is baby", animal);
             return false;
         }
 
