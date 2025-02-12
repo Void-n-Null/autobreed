@@ -10,7 +10,6 @@ import com.mojang.logging.LogUtils;
 
 public class ConsumeHayBaleGoal extends AbstractConsumeGoal<BlockPos, TargetHayBlockGoal> {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int EATING_COOLDOWN_TICKS = 40;
 
     public ConsumeHayBaleGoal(Animal animal, TargetHayBlockGoal targetGoal) {
         super(animal, targetGoal);
@@ -18,7 +17,7 @@ public class ConsumeHayBaleGoal extends AbstractConsumeGoal<BlockPos, TargetHayB
 
     @Override
     protected int getEatingCooldownTicks() {
-        return EATING_COOLDOWN_TICKS;
+        return 0; // No cooldown needed since this is adult-only
     }
 
     @Override
