@@ -15,6 +15,8 @@ import net.voidnull.autobreed.goals.TargetItemFrameGoal;
 import net.voidnull.autobreed.goals.ConsumeFoodGoal;
 import net.voidnull.autobreed.goals.TargetHayBlockGoal;
 import net.voidnull.autobreed.goals.ConsumeHayBaleGoal;
+import net.voidnull.autobreed.goals.TargetWheatCropGoal;
+import net.voidnull.autobreed.goals.ConsumeWheatCropGoal;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.neoforge.common.NeoForge;
@@ -38,7 +40,8 @@ public class AutoBreed {
         
         // Register for forge events
         NeoForge.EVENT_BUS.register(this);
-        NeoForge.EVENT_BUS.register(new HayBaleEventHandler());  // Only need the hay bale handler now
+        NeoForge.EVENT_BUS.register(new HayBaleEventHandler());
+        NeoForge.EVENT_BUS.register(new WheatCropEventHandler());
         
         LOGGER.info("AutoBreed mod initialization completed.");
     }
@@ -63,15 +66,23 @@ public class AutoBreed {
             //When the animal has nothing better to do, it will go after item frames.
             animal.goalSelector.addGoal(3, new TargetItemFrameGoal(animal));
             
-            // Only add hay bale goals for animals that eat wheat
+            // Only add hay bale and wheat crop goals for animals that eat wheat
             if (animal.isFood(Items.WHEAT.getDefaultInstance())) {
                 // Hay bale goals
                 TargetHayBlockGoal targetHayGoal = new TargetHayBlockGoal(animal);
                 ConsumeHayBaleGoal consumeHayGoal = new ConsumeHayBaleGoal(animal, targetHayGoal);
                 
-                // Add hay goals
-                animal.goalSelector.addGoal(1, consumeHayGoal);    // Equal priority with food consumption
-                animal.goalSelector.addGoal(2, targetHayGoal);     // Equal priority with food movement
+                // Wheat crop goals
+                TargetWheatCropGoal targetWheatGoal = new TargetWheatCropGoal(animal);
+                ConsumeWheatCropGoal consumeWheatGoal = new ConsumeWheatCropGoal(animal, targetWheatGoal);
+                
+                // Add hay bale goals with slightly lower priority
+                animal.goalSelector.addGoal(3, consumeHayGoal);
+                animal.goalSelector.addGoal(4, targetHayGoal);
+                
+                // Add wheat crop goals with higher priority
+                animal.goalSelector.addGoal(1, consumeWheatGoal);
+                animal.goalSelector.addGoal(2, targetWheatGoal);
             }
         }
     }
