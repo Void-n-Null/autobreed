@@ -4,6 +4,8 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import java.util.EnumSet;
 
 public class ConsumeFoodGoal extends Goal {
@@ -63,6 +65,8 @@ public class ConsumeFoodGoal extends Goal {
         }
 
         ItemStack foodStack = targetFood.getItem();
+
+        animal.level().playSound(null, animal, SoundEvents.GENERIC_EAT, SoundSource.NEUTRAL, 1.0F, 1.0F);
         if (animal.isBaby()) {
             foodStack.shrink(1);
             cooldown = EATING_COOLDOWN_TICKS;
