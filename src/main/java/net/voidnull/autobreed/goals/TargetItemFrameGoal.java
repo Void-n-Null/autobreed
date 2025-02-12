@@ -1,44 +1,27 @@
 package net.voidnull.autobreed.goals;
 
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import java.util.EnumSet;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
-public class TargetItemFrameGoal extends Goal {
-    private final Animal animal;
-    private ItemFrame targetEntity;
-    private final PathNavigation pathNav;
-    private final double speedModifier;
-    private static final double TARGET_DISTANCE = 1.0D;
-    private int timeToRecalcPath;
-    private boolean isRunning;
+public class TargetItemFrameGoal extends AbstractTargetGoal<ItemFrame> {
 
     public TargetItemFrameGoal(Animal animal) {
         this(animal, 1.0D);
     }
 
     public TargetItemFrameGoal(Animal animal, double speedModifier) {
-        this.animal = animal;
-        this.speedModifier = speedModifier;
-        this.pathNav = animal.getNavigation();
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        super(animal, speedModifier);
     }
 
-    private boolean canMoveToTarget() {
-        return !animal.isLeashed() && 
-               animal.onGround() &&
-               targetEntity != null &&
-               isValidFoodSource(targetEntity);
+    @Override
+    protected boolean isValidTarget(ItemFrame target) {
+        return animal.isFood(target.getItem());
     }
 
-    private boolean isValidFoodSource(ItemFrame itemFrame) {
-        return animal.isFood(itemFrame.getItem());
-    }
-
-    private ItemFrame findFood() {
+    @Override
+    protected ItemFrame findTarget() {
         List<ItemFrame> frames = this.animal.level().getEntitiesOfClass(ItemFrame.class,
             this.animal.getBoundingBox().inflate(8.0D, 4.0D, 8.0D));
         
@@ -51,75 +34,38 @@ public class TargetItemFrameGoal extends Goal {
     }
 
     @Override
-    public boolean canUse() {
-        if (targetEntity != null && targetEntity.isAlive() && canMoveToTarget()) {
-            return true;
-        }
-        
-        ItemFrame newTarget = findFood();
-        if (newTarget == null) return false;
-        
-        targetEntity = newTarget;
-        return canMoveToTarget();
-    }
-
-    @Override
-    public boolean canContinueToUse() {
-        return isRunning && 
-               targetEntity != null && 
-               targetEntity.isAlive() && 
-               canMoveToTarget();
-    }
-
-    @Override
-    public void start() {
-        this.isRunning = true;
-        this.timeToRecalcPath = 0;
-        updatePath();
-    }
-
-    @Override
-    public void stop() {
-        this.isRunning = false;
-        this.targetEntity = null;
-        this.pathNav.stop();
-    }
-
-    private void updatePath() {
+    protected void updatePathToTarget() {
         if (targetEntity != null) {
             this.pathNav.moveTo(targetEntity, this.speedModifier);
         }
     }
 
     @Override
-    public void tick() {
-        if (targetEntity == null || !targetEntity.isAlive()) {
-            stop();
-            return;
-        }
-
-        // Look at the food source
+    protected void lookAtTarget() {
         this.animal.getLookControl().setLookAt(
             targetEntity,
             (float)(this.animal.getMaxHeadXRot() + 20),
             (float)this.animal.getMaxHeadXRot()
         );
+    }
 
-        // Update path periodically
-        if (--this.timeToRecalcPath <= 0) {
-            this.timeToRecalcPath = 10;
-            if (this.pathNav.isDone()) {
-                updatePath();
-            }
-        }
+    @Override
+    protected boolean isTargetValid() {
+        return targetEntity != null && targetEntity.isAlive();
+    }
+
+    @Override
+    protected Vec3 getTargetPos(ItemFrame target) {
+        return target.position();
+    }
+
+    @Override
+    protected double getDesiredTargetDistance() {
+        // Item frames need a bit more distance since they're on walls
+        return BASE_TARGET_DISTANCE + 0.5D;
     }
 
     public ItemFrame getTargetItemFrame() {
-        return targetEntity;
-    }
-
-    public boolean isCloseEnoughToTarget() {
-        if (targetEntity == null) return false;
-        return animal.distanceTo(targetEntity) <= TARGET_DISTANCE;
+        return getTarget();
     }
 } 
