@@ -1,14 +1,15 @@
 package net.voidnull.autobreed.goals;
 
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
-import net.voidnull.autobreed.HayBaleDataManager;
+import net.voidnull.autobreed.tracking.TrackedHayBale;
 
 public class ConsumeHayBaleGoal extends AbstractConsumeGoal<BlockPos, TargetHayBlockGoal> {
+    private final TrackedHayBale hayTracker;
 
     public ConsumeHayBaleGoal(Animal animal, TargetHayBlockGoal targetGoal) {
         super(animal, targetGoal);
+        this.hayTracker = targetGoal.getHayTracker();
     }
 
     @Override
@@ -18,12 +19,12 @@ public class ConsumeHayBaleGoal extends AbstractConsumeGoal<BlockPos, TargetHayB
 
     @Override
     protected void consumeTarget() {
-        HayBaleDataManager.decrementEatenCount(targetResource, animal.level());
+        hayTracker.consumeHayBale(targetResource);
     }
 
     @Override
     protected boolean isTargetValid(BlockPos target) {
-        return target != null && animal.level().getBlockState(target).is(Blocks.HAY_BLOCK);
+        return target != null && hayTracker.matches(animal.level().getBlockState(target));
     }
 
     @Override
