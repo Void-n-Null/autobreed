@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtAccounter;
 import net.voidnull.autobreed.AutoBreed;
-import net.voidnull.autobreed.crops.CropType;
+
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import java.io.IOException;

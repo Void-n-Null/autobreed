@@ -12,7 +12,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Items;
 import net.voidnull.autobreed.goals.*;
 import net.voidnull.autobreed.tracking.*;
-import net.voidnull.autobreed.crops.CropType;
+
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.neoforged.neoforge.common.NeoForge;

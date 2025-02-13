@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.voidnull.autobreed.crops.CropType;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -1,4 +1,4 @@
-package net.voidnull.autobreed.crops;
+package net.voidnull.autobreed.tracking;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -8,18 +8,16 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public enum CropType {
-    WHEAT(Blocks.WHEAT, Items.WHEAT, 7),
-    CARROTS(Blocks.CARROTS, Items.CARROT, 7),
-    POTATOES(Blocks.POTATOES, Items.POTATO, 7);
+    WHEAT(Blocks.WHEAT, Items.WHEAT),
+    CARROTS(Blocks.CARROTS, Items.CARROT),
+    POTATOES(Blocks.POTATOES, Items.POTATO);
 
     private final Block cropBlock;
     private final Item cropItem;
-    private final int maxAge;
 
-    CropType(Block cropBlock, Item cropItem, int maxAge) {
+    CropType(Block cropBlock, Item cropItem) {
         this.cropBlock = cropBlock;
         this.cropItem = cropItem;
-        this.maxAge = maxAge;
     }
 
     public Block getCropBlock() {
@@ -28,10 +26,6 @@ public enum CropType {
 
     public Item getCropItem() {
         return cropItem;
-    }
-
-    public int getMaxAge() {
-        return maxAge;
     }
 
     public boolean isFullyGrown(BlockState state) {
