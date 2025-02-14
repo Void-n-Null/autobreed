@@ -27,8 +27,8 @@ public class AutoBreedConfig {
 
         SEARCH_RADIUS = BUILDER
             .comment("How far (in blocks) animals will search horizontally for food sources (items, hay bales, item frames)",
-                    "Default: 8 blocks")
-            .defineInRange("searchRadius", 8, 1, 16);
+                    "Default: 16 blocks")
+            .defineInRange("searchRadius", 16, 1, 32);
 
         SEARCH_VERTICAL_RADIUS = BUILDER
             .comment("How far (in blocks) animals will search vertically for food sources",

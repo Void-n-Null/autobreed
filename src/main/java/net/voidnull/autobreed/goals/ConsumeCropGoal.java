@@ -50,10 +50,9 @@ public class ConsumeCropGoal extends AbstractConsumeGoal<BlockPos, TargetCropGoa
     }
 
     private boolean isNextTo(BlockPos animalPos, BlockPos cropPos) {
-        // Check all adjacent positions
-        return animalPos.equals(cropPos.north()) ||
-               animalPos.equals(cropPos.south()) ||
-               animalPos.equals(cropPos.east()) ||
-               animalPos.equals(cropPos.west());
+        // Check all adjacent positions including diagonals
+        int dx = Math.abs(animalPos.getX() - cropPos.getX());
+        int dz = Math.abs(animalPos.getZ() - cropPos.getZ());
+        return dx <= 1 && dz <= 1 && animalPos.getY() == cropPos.getY();
     }
 } 

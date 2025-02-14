@@ -5,6 +5,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
+import net.voidnull.autobreed.AutoBreed;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,10 +55,18 @@ public class TrackedCrop implements TrackedBlock {
     
     public void consumeCrop(BlockPos pos, LevelAccessor level) {
         if (level.getBlockState(pos).getBlock() instanceof CropBlock cropBlock) {
+            // First remove the old state from tracking
+            onRemoved(pos, level);
+            
             // Reset the crop to age 0 (just planted)
             BlockState newState = cropBlock.getStateForAge(0);
             level.setBlock(pos, newState, 3);
-            growthStates.put(pos, false);
+            
+            // Add the new state to tracking
+            onDiscovered(pos, level, newState);
+            
+            // Notify the cache about the state change
+            AutoBreed.getBlockTracker().getBlockCache().onBlockChanged(pos, level, newState);
         }
     }
     

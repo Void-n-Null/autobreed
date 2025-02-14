@@ -84,7 +84,19 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
 
     @Override
     public boolean canUse() {
-        // First check breeding conditions
+        // First find a target
+        BlockPos newTarget = findTarget();
+        if (newTarget == null) {
+            return false;
+        }
+
+        // For babies, we only need to check if they can move to the target
+        if(animal.isBaby()) {
+            targetEntity = newTarget;
+            return canMoveToTarget();
+        }
+
+        // For adults, check breeding conditions
         if(animal.isInLove()) {
             return false;
         }
@@ -101,21 +113,6 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
             return false;
         }
 
-        // Allow babies to eat crops
-        if(animal.isBaby()) {
-            BlockPos newTarget = findTarget();
-            if (newTarget == null) {
-                return false;
-            }
-            targetEntity = newTarget;
-            return canMoveToTarget();
-        }
-
-        // For adults, find a new target and check if it's valid
-        BlockPos newTarget = findTarget();
-        if (newTarget == null) {
-            return false;
-        }
         targetEntity = newTarget;
         return canMoveToTarget();
     }
