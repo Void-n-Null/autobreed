@@ -65,7 +65,7 @@ public class AutoBreed {
             //Separate goal for item frames.
             //Leave it at a lower priority than food goals.
             //When the animal has nothing better to do, it will go after item frames.
-            animal.goalSelector.addGoal(3, new TargetItemFrameGoal(animal));
+            animal.goalSelector.addGoal(4, new TargetItemFrameGoal(animal));
             
             // Only add hay bale and crop goals for animals that eat wheat
             if (animal.isFood(Items.WHEAT.getDefaultInstance())) {
@@ -74,21 +74,21 @@ public class AutoBreed {
                 ConsumeHayBaleGoal consumeHayGoal = new ConsumeHayBaleGoal(animal, targetHayGoal);
                 
                 // Add hay bale goals with slightly lower priority
-                animal.goalSelector.addGoal(3, consumeHayGoal);
-                animal.goalSelector.addGoal(4, targetHayGoal);
+                animal.goalSelector.addGoal(2, consumeHayGoal);
+                animal.goalSelector.addGoal(3, targetHayGoal);
                 
                 // Add crop goals for wheat
-                addCropGoals(animal, CropType.WHEAT, 1);
+                addCropGoals(animal, CropType.WHEAT, 2);
             }
             
             // Add carrot goals for animals that eat carrots
             if (animal.isFood(Items.CARROT.getDefaultInstance())) {
-                addCropGoals(animal, CropType.CARROTS, 1);
+                addCropGoals(animal, CropType.CARROTS, 2);
             }
             
             // Add potato goals for animals that eat potatoes
             if (animal.isFood(Items.POTATO.getDefaultInstance())) {
-                addCropGoals(animal, CropType.POTATOES, 1);
+                addCropGoals(animal, CropType.POTATOES, 2);
             }
         }
     }

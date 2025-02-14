@@ -4,22 +4,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtAccounter;
-import net.voidnull.autobreed.AutoBreed;
-
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -28,9 +12,6 @@ import java.util.*;
  * all block tracking activities.
  */
 public class BlockTrackingHandler {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private Path savePath;
-    
     // The main cache that handles all block tracking
     private final ChunkBasedCache blockCache;
     
@@ -80,114 +61,18 @@ public class BlockTrackingHandler {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(LevelEvent.Load event) {
-        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
-        
-        savePath = serverLevel.getServer().getWorldPath(LevelResource.ROOT)
-                            .resolve("data")
-                            .resolve(AutoBreed.MODID + "_block_data.dat");
-
-        try {
-            if (Files.exists(savePath)) {
-                CompoundTag loadedData = NbtIo.readCompressed(savePath, NbtAccounter.unlimitedHeap());
-                
-                // Load hay bale data
-                if (loadedData.contains("HayBales")) {
-                    ListTag hayBaleList = loadedData.getList("HayBales", Tag.TAG_COMPOUND);
-                    for (int i = 0; i < hayBaleList.size(); i++) {
-                        CompoundTag hayBaleTag = hayBaleList.getCompound(i);
-                        BlockPos pos = new BlockPos(
-                            hayBaleTag.getInt("X"),
-                            hayBaleTag.getInt("Y"),
-                            hayBaleTag.getInt("Z")
-                        );
-                        if (serverLevel.getBlockState(pos).is(Blocks.HAY_BLOCK)) {
-                            int eatenCount = hayBaleTag.getInt("EatenCount");
-                            for (int j = 0; j < eatenCount; j++) {
-                                hayBaleTracker.consumeHayBale(pos);
-                            }
-                        }
-                    }
-                }
-                
-                // Load crop data
-                if (loadedData.contains("Crops")) {
-                    CompoundTag cropsTag = loadedData.getCompound("Crops");
-                    for (CropType cropType : CropType.values()) {
-                        String cropName = cropType.name();
-                        if (cropsTag.contains(cropName)) {
-                            ListTag cropList = cropsTag.getList(cropName, Tag.TAG_COMPOUND);
-                            TrackedCrop tracker = cropTrackers.get(cropType);
-                            for (int i = 0; i < cropList.size(); i++) {
-                                CompoundTag cropTag = cropList.getCompound(i);
-                                BlockPos pos = new BlockPos(
-                                    cropTag.getInt("X"),
-                                    cropTag.getInt("Y"),
-                                    cropTag.getInt("Z")
-                                );
-                                if (serverLevel.getBlockState(pos).is(cropType.getCropBlock())) {
-                                    tracker.onDiscovered(pos, serverLevel, serverLevel.getBlockState(pos));
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                LOGGER.info("Block tracking data loaded successfully");
-            }
-        } catch (IOException e) {
-            LOGGER.error("Failed to load block tracking data", e);
-        }
-    }
-
-    @SubscribeEvent
-    public void onWorldSave(LevelEvent.Save event) {
-        if (!(event.getLevel() instanceof ServerLevel)) return;
-        
-        CompoundTag saveData = new CompoundTag();
-        
-        // Save hay bale data
-        ListTag hayBaleList = new ListTag();
-        blockCache.findBlocksInRadius(BlockPos.ZERO, Integer.MAX_VALUE, hayBaleTracker)
-            .forEach(pos -> {
-                CompoundTag hayBaleTag = new CompoundTag();
-                hayBaleTag.putInt("X", pos.getX());
-                hayBaleTag.putInt("Y", pos.getY());
-                hayBaleTag.putInt("Z", pos.getZ());
-                hayBaleTag.putInt("EatenCount", hayBaleTracker.getEatenCount(pos));
-                hayBaleList.add(hayBaleTag);
-            });
-        saveData.put("HayBales", hayBaleList);
-        
-        // Save crop data
-        CompoundTag cropsTag = new CompoundTag();
-        for (Map.Entry<CropType, TrackedCrop> entry : cropTrackers.entrySet()) {
-            ListTag cropList = new ListTag();
-            blockCache.findBlocksInRadius(BlockPos.ZERO, Integer.MAX_VALUE, entry.getValue())
-                .forEach(pos -> {
-                    CompoundTag cropTag = new CompoundTag();
-                    cropTag.putInt("X", pos.getX());
-                    cropTag.putInt("Y", pos.getY());
-                    cropTag.putInt("Z", pos.getZ());
-                    cropList.add(cropTag);
-                });
-            cropsTag.put(entry.getKey().name(), cropList);
-        }
-        saveData.put("Crops", cropsTag);
-
-        try {
-            Files.createDirectories(savePath.getParent());
-            NbtIo.writeCompressed(saveData, savePath);
-            LOGGER.info("Block tracking data saved successfully");
-        } catch (IOException e) {
-            LOGGER.error("Failed to save block tracking data", e);
-        }
-    }
-
-    @SubscribeEvent
     public void onWorldUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) return;  // Server-side only
         blockCache.clear();
+        // Log final stats before world unloads
+        PerformanceMetrics.logStats();
+    }
+    
+    @SubscribeEvent
+    public void onWorldSave(LevelEvent.Save event) {
+        if (event.getLevel().isClientSide()) return;  // Server-side only
+        // Log performance stats on world save
+        PerformanceMetrics.logStats();
     }
     
     // Helper methods to access trackers

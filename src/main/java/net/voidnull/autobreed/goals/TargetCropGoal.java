@@ -5,13 +5,12 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.phys.Vec3;
 import net.voidnull.autobreed.tracking.TrackedCrop;
 import net.voidnull.autobreed.AutoBreedConfig;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 import net.voidnull.autobreed.AutoBreed;
 
 public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private final TrackedCrop cropTracker;
+    private BlockPos lastFailedTarget;
+    private int retryTargetTicks;
 
     public TargetCropGoal(Animal animal, TrackedCrop cropTracker) {
         this(animal, 1.0D, cropTracker);
@@ -20,9 +19,6 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
     public TargetCropGoal(Animal animal, double speedModifier, TrackedCrop cropTracker) {
         super(animal, speedModifier);
         this.cropTracker = cropTracker;
-        LOGGER.debug("Created TargetCropGoal for {} to target {}", 
-            animal.getType().getDescription().getString(),
-            cropTracker.getCropType().name());
     }
     
     public TrackedCrop getCropTracker() {
@@ -31,31 +27,27 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
 
     @Override
     protected boolean isValidTarget(BlockPos target) {
+        if (target == null || target.equals(lastFailedTarget)) {
+            return false;
+        }
         boolean matches = cropTracker.matches(animal.level().getBlockState(target));
         boolean grown = cropTracker.isFullyGrown(target);
-        LOGGER.debug("Checking target {} for {}: matches={}, grown={}", 
-            target, animal.getType().getDescription().getString(), matches, grown);
         return matches && grown;
     }
 
     @Override
     protected BlockPos findTarget() {
-        LOGGER.debug("Looking for {} crops near {}", 
-            cropTracker.getCropType().name(),
-            animal.getType().getDescription().getString());
-            
         BlockPos animalPos = animal.blockPosition();
         BlockPos target = AutoBreed.getBlockTracker().getBlockCache()
             .findNearest(animalPos, AutoBreedConfig.SEARCH_RADIUS.get(), cropTracker);
-            
-        if (target != null) {
-            LOGGER.info("Found {} crop at {} for {}", 
-                cropTracker.getCropType().name(), target,
-                animal.getType().getDescription().getString());
-        } else {
-            LOGGER.debug("No {} crops found for {}", 
-                cropTracker.getCropType().name(),
-                animal.getType().getDescription().getString());
+        
+        // If we found the same target that recently failed, ignore it for a while
+        if (target != null && target.equals(lastFailedTarget)) {
+            if (retryTargetTicks > 0) {
+                return null;
+            }
+            // Reset failed target after cooldown
+            lastFailedTarget = null;
         }
         
         return target;
@@ -64,9 +56,6 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
     @Override
     protected void updatePathToTarget() {
         if (targetEntity != null) {
-            LOGGER.debug("{} moving to {} at {}", 
-                animal.getType().getDescription().getString(),
-                cropTracker.getCropType().name(), targetEntity);
             this.pathNav.moveTo(targetEntity.getX() + 0.5, targetEntity.getY(), targetEntity.getZ() + 0.5, this.speedModifier);
         }
     }
@@ -85,66 +74,58 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
     @Override
     protected boolean isTargetValid() {
         boolean valid = targetEntity != null && isValidTarget(targetEntity);
-        LOGGER.debug("Checking if target is valid for {}: {}", 
-            animal.getType().getDescription().getString(), valid);
+        if (!valid && targetEntity != null) {
+            // Mark this target as failed so we don't immediately try it again
+            lastFailedTarget = targetEntity;
+            retryTargetTicks = 100; // Wait 5 seconds before retrying this target
+        }
         return valid;
     }
 
     @Override
     public boolean canUse() {
-        // First find a target
-        if (targetEntity != null && isTargetValid() && canMoveToTarget()) {
-            LOGGER.debug("{} can use existing target", 
-                animal.getType().getDescription().getString());
-            return true;
+        // First check breeding conditions
+        if(animal.isInLove()) {
+            return false;
         }
-        
-        BlockPos newTarget = findTarget();
-        if (newTarget == null) {
-            LOGGER.debug("{} found no target", 
-                animal.getType().getDescription().getString());
+        if(!animal.canFallInLove()) {
+            return false;
+        }
+        if(animal.canBreed()) {
+            return false;
+        }
+        if(animal.getAge() != 0) {
+            return false;
+        }
+        if(!animal.isFood(cropTracker.getCropType().getCropItem().getDefaultInstance())) {
             return false;
         }
 
+        // Allow babies to eat crops
         if(animal.isBaby()) {
-            LOGGER.debug("Baby {} can use target", 
-                animal.getType().getDescription().getString());
+            BlockPos newTarget = findTarget();
+            if (newTarget == null) {
+                return false;
+            }
             targetEntity = newTarget;
             return canMoveToTarget();
         }
 
-        // Then check breeding conditions
-        if(animal.isInLove()) {
-            LOGGER.debug("{} can't use target: in love", 
-                animal.getType().getDescription().getString());
+        // For adults, find a new target and check if it's valid
+        BlockPos newTarget = findTarget();
+        if (newTarget == null) {
             return false;
         }
-        if(!animal.canFallInLove()) {
-            LOGGER.debug("{} can't use target: can't fall in love", 
-                animal.getType().getDescription().getString());
-            return false;
-        }
-        if(animal.canBreed()) {
-            LOGGER.debug("{} can't use target: can breed", 
-                animal.getType().getDescription().getString());
-            return false;
-        }
-        if(animal.getAge() != 0) {
-            LOGGER.debug("{} can't use target: wrong age", 
-                animal.getType().getDescription().getString());
-            return false;
-        }
-        if(!animal.isFood(cropTracker.getCropType().getCropItem().getDefaultInstance())) {
-            LOGGER.debug("{} can't use target: doesn't eat {}", 
-                animal.getType().getDescription().getString(),
-                cropTracker.getCropType().name());
-            return false;
-        }
-
-        LOGGER.info("Adult {} can use target at {}", 
-            animal.getType().getDescription().getString(), newTarget);
         targetEntity = newTarget;
         return canMoveToTarget();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (retryTargetTicks > 0) {
+            retryTargetTicks--;
+        }
     }
 
     @Override
@@ -160,5 +141,9 @@ public class TargetCropGoal extends AbstractTargetGoal<BlockPos> {
 
     public BlockPos getTargetPos() {
         return getTarget();
+    }
+    
+    public void clearTarget() {
+        targetEntity = null;
     }
 } 
